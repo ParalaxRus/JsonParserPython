@@ -1,6 +1,6 @@
-from node import JsonNode
-from token import JsonTokenType
-from tokenizer import JsonTokenizer
+from json_parser.node import JsonNode
+from json_parser.token import JsonTokenType
+from json_parser.tokenizer import JsonTokenizer
 
 class JsonParser:
 

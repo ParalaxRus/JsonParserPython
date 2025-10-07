@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Self
 
 class JsonTokenType(Enum):
         LEFT_BRACE = 1 # {
@@ -17,6 +16,6 @@ class JsonTokenType(Enum):
         UNKNOWN = 13
 
 class JsonToken:
-    def __init__(self, type: JsonTokenType, value: str = '') -> Self:
+    def __init__(self, type: JsonTokenType, value: str = ''):
         self.type = type
         self.value = value

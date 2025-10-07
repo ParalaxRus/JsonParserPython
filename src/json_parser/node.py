@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Self
 
 class JsonNode:
 
@@ -11,7 +10,7 @@ class JsonNode:
         BOOL = 5
         NULL = 6
 
-    def __init__(self, type = NodeType.NULL, value = None) -> Self:
+    def __init__(self, type = NodeType.NULL, value = None):
         self._type = type
         self._value = value
         
@@ -41,26 +40,26 @@ class JsonNode:
                 raise RuntimeError()
 
     @classmethod
-    def create_object(cls, val: dict[str, Self] = {}) -> Self:
+    def create_object(cls, val: dict[str, 'JsonNode'] = {}) -> 'JsonNode':
         return JsonNode(JsonNode.NodeType.OBJECT, {})
     
     @classmethod
-    def create_array(cls) -> Self:
+    def create_array(cls) -> 'JsonNode':
         return JsonNode(JsonNode.NodeType.ARRAY, [])
     
     @classmethod
-    def create_string(cls, val: str) -> Self:
+    def create_string(cls, val: str) -> 'JsonNode':
         return JsonNode(JsonNode.NodeType.STR, val)
     
     @classmethod
-    def create_number(cls, val: float) -> Self:
+    def create_number(cls, val: float) -> 'JsonNode':
         return JsonNode(JsonNode.NodeType.NUM, val)
     
     @classmethod
-    def create_bool(cls, val: bool) -> Self:
+    def create_bool(cls, val: bool) -> 'JsonNode':
         return JsonNode(JsonNode.NodeType.BOOL, val)
     
     @classmethod
-    def create_null(cls) -> Self:
+    def create_null(cls) -> 'JsonNode':
         return JsonNode(JsonNode.NodeType.NULL)
 

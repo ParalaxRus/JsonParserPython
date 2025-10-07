@@ -1,4 +1,4 @@
-from token import JsonToken, JsonTokenType
+from json_parser.token import JsonToken, JsonTokenType
 
 
 class JsonTokenizer:
@@ -16,11 +16,9 @@ class JsonTokenizer:
         return c.isalnum()
 
     def _skip(self) -> None:
-        while (
-            (self._val[self._pos] == " ")
-            or (self._val[self._pos] == "\t")
-            or (self._val[self._pos] == "\n")
-        ):
+        while self._pos < len(self._val):
+            if (self._val[self._pos] != " ") or (self._val[self._pos] != "\t") or (self._val[self._pos] != "\n"):
+                break
             self._pos += 1
 
     def _peek(self) -> str:
@@ -99,11 +97,11 @@ class JsonTokenizer:
             case '\0':
                 return JsonToken(JsonTokenType.JSON_END)
 
-    def tokenize(self) -> list[JsonToken]:
+    def tokenize(self) -> list['JsonToken']:
         tokens = []
         while True:
             token = self._get_next_token()
-            if token.type == JsonToken.TokenType.JSON_END:
+            if token.type == JsonTokenType.JSON_END:
                 break
             tokens.append(token)
         return tokens
