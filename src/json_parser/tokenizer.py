@@ -3,28 +3,40 @@ from json_parser.token import JsonToken, JsonTokenType
 
 class JsonTokenizer:
 
+    _SKIPPABLE = {' ', '\t', '\n'}
+
     def __init__(self, val: str):
         self._val = val
         self._pos = 0
 
     @staticmethod
     def _is_number(c: str) -> bool:
+        if len(c) == 0:
+            return False
         return (c == '-') or c.isdigit()
     
     @staticmethod
     def _is_alnum(c: str) -> bool:
+        if len(c) == 0:
+            return False
         return c.isalnum()
+    
+    @classmethod
+    def _skippable(cls, c: str) -> bool:
+        return c in cls._SKIPPABLE
 
     def _skip(self) -> None:
-        while self._pos < len(self._val):
-            if (self._val[self._pos] != " ") or (self._val[self._pos] != "\t") or (self._val[self._pos] != "\n"):
-                break
-            self._pos += 1
+        while self._pos < len(self._val) and JsonTokenizer._skippable(self._val[self._pos]):
+            self._pos = self._pos + 1
 
     def _peek(self) -> str:
+        if (self._pos >= len(self._val)):
+            return ""
         return self._val[self._pos]
 
     def _get(self) -> str:
+        if (self._pos >= len(self._val)):
+            return ""
         v = self._val[self._pos]
         self._pos += 1
         return v
@@ -38,15 +50,16 @@ class JsonTokenizer:
             val += c
         return JsonToken(JsonTokenType.STRING, val)
     
-    def _parse_str(self) -> JsonToken:
+    def _parse_num(self) -> JsonToken:
         val = ''
         if self._peek() == '-':
             val = '-'
             self._get()
         while True: 
-            c = self._get()
+            c = self._peek()
             if not c.isdigit():
                 break
+            c = self._get()
             val += c
         return JsonToken(JsonTokenType.NUMBER, val)
     
@@ -90,12 +103,15 @@ class JsonTokenizer:
             case '"':
                 self._get()
                 return self._parse_str()
-            case JsonTokenizer._is_number(c):
-                return self._parse_num()
-            case JsonTokenizer._is_alnum(c):
-                return self._parse_keyword()
-            case '\0':
+            case "":
                 return JsonToken(JsonTokenType.JSON_END)
+            case _:
+                if JsonTokenizer._is_number(c):
+                    return self._parse_num()
+                if JsonTokenizer._is_alnum(c):
+                    return self._parse_keyword()
+                raise RuntimeError(f"Unknown character {c}")
+            
 
     def tokenize(self) -> list['JsonToken']:
         tokens = []
