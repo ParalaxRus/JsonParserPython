@@ -65,8 +65,12 @@ class JsonTokenizer:
     
     def _parse_keyword(self) -> JsonToken:
         val = ''
-        while JsonTokenizer._is_alnum(val):
-            val += self._get()
+        while True:
+            c = self._peek()
+            if not JsonTokenizer._is_alnum(c):
+                break
+            c = self._get()
+            val += c
         val = val.lower()
         if val == 'true':
             return JsonToken(JsonTokenType.TRUE)

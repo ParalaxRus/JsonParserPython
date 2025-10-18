@@ -15,7 +15,9 @@ test_suite = [
         "address": {
           "city": "New York",
           "zip": "10001"
-        }
+        },
+        "employed": True,
+        "email": null
       }
       """,
       [JsonToken(JsonTokenType.LEFT_BRACE),
@@ -48,6 +50,14 @@ test_suite = [
        JsonToken(JsonTokenType.COLON),
        JsonToken(JsonTokenType.STRING, "10001"),
        JsonToken(JsonTokenType.RIGHT_BRACE),
+       JsonToken(JsonTokenType.COMMA),
+       JsonToken(JsonTokenType.STRING, "employed"),
+       JsonToken(JsonTokenType.COLON),
+       JsonToken(JsonTokenType.TRUE),
+       JsonToken(JsonTokenType.COMMA),
+       JsonToken(JsonTokenType.STRING, "email"),
+       JsonToken(JsonTokenType.COLON),
+       JsonToken(JsonTokenType.NULL),
        JsonToken(JsonTokenType.RIGHT_BRACE)
        ]),
 ]

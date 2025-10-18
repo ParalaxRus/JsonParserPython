@@ -8,50 +8,58 @@ class JsonParser:
         self._idx = 0
         self._tokens = []
 
-    def parse_object(self) -> JsonNode:
+    def _parse_object(self) -> JsonNode:
         node = JsonNode.create_object()
-        while self._tokens[self._idx].type != JsonTokenType.RIGHT_BRACKET:
-            self._idx += 1
+        self._idx += 1
+        while self._tokens[self._idx].type != JsonTokenType.RIGHT_BRACE:
             next = self._tokens[self._idx]
+            if next.type == JsonTokenType.COMMA:
+                self._idx += 1
+                continue
             if next.type != JsonTokenType.STRING:
                 raise RuntimeError()
             key = next.value
             self._idx += 1
+            next = self._tokens[self._idx]
             if next.type != JsonTokenType.COLON:
                 raise RuntimeError()
             self._idx += 1
-            node[key] = self._parse()
+            node._value[key] = self._parse()
         return node
 
 
-    def parse_list(self) -> JsonNode:
+    def _parse_list(self) -> JsonNode:
         node = JsonNode.create_list()
+        self._idx += 1
         while self._tokens[self._idx].type != JsonTokenType.RIGHT_BRACKET:
-            self._idx += 1
-            if next.type != JsonTokenType.COMMA:
+            if self._tokens[self._idx].type == JsonTokenType.COMMA:
+                self._idx += 1
                 continue
             next = self._parse()
-            node.appeend(next)
+            node._value.append(next)
         return node
 
     def _parse(self) -> JsonNode:
         if self._idx >= len(self._tokens):
             return JsonNode(JsonNode.NodeType.NULL)
+        node = None
         match self._tokens[self._idx].type:
             case JsonTokenType.LEFT_BRACE:
-                return self._parse_object()
+                node = self._parse_object()
             case JsonTokenType.LEFT_BRACKET:
-                return self._parse_list()
+                node = self._parse_list()
             case JsonTokenType.STRING:
-                return JsonNode.create_string(self._tokens[self._idx].value)
+                node = JsonNode.create_string(self._tokens[self._idx].value)
             case JsonTokenType.NUMBER:
-                return JsonNode.create_number(self._tokens[self._idx].value)
+                node = JsonNode.create_number(self._tokens[self._idx].value)
             case JsonTokenType.TRUE:
-                return JsonNode.create_bool(True)
+                node = JsonNode.create_bool(True)
             case JsonTokenType.FALSE:
-                return JsonNode.create_bool(False)
+                node = JsonNode.create_bool(False)
             case JsonTokenType.NULL:
-                return JsonNode.create_null()
+                node = JsonNode.create_null()
+        self._idx += 1
+        return node
         
     def parse(self, val: str) -> JsonNode:
         tokenizer = JsonTokenizer(val)

@@ -17,34 +17,40 @@ class JsonNode:
     def __str__(self) -> str:
         match self._type:
             case JsonNode.NodeType.OBJECT:
-                dic = ''
-                for key, value in self._value:
-                    dic += f'"{key}":{str(value)},'
-                if len(dict) > 0:
-                    dic = dic[:-1]
-                return arr
+                objAsStr = ''
+                for key in self._value:
+                    value = self._value[key]
+                    objAsStr += f'"{key}":{str(value)},'
+                if len(objAsStr) > 0:
+                    objAsStr = objAsStr[:-1]
+                return f"{{{objAsStr}}}"
             case JsonNode.NodeType.ARRAY:
-                arr = ''
+                arrAsStr = ''
                 for item in self._value:
-                    arr += str(item) + ','
-                if len(arr) > 0:
-                    arr = arr[:-1]
-                return arr
+                    arrAsStr += str(item) + ','
+                if len(arrAsStr) > 0:
+                    arrAsStr = arrAsStr[:-1]
+                return f"[{arrAsStr}]"
             case JsonNode.NodeType.STR:
                 return f'"{self._value}"'
             case JsonNode.NodeType.NUM:
                 return f'{self._value}'
             case JsonNode.NodeType.BOOL:
                 return str(self._value)
+            case JsonNode.NodeType.NULL:
+                return "null"
             case _:
                 raise RuntimeError()
+            
+    def __repr__(self):
+         return f"{self._type} {self._value}"
 
     @classmethod
     def create_object(cls, val: dict[str, 'JsonNode'] = {}) -> 'JsonNode':
         return JsonNode(JsonNode.NodeType.OBJECT, {})
     
     @classmethod
-    def create_array(cls) -> 'JsonNode':
+    def create_list(cls) -> 'JsonNode':
         return JsonNode(JsonNode.NodeType.ARRAY, [])
     
     @classmethod
